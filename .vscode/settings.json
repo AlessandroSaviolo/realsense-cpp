@@ -1,0 +1,28 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/alessandro/Workspace/arpl_ws/install/trackers_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/arpl_depth_completion/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/realsense2_camera_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/quadrotor_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/px4_ros_com/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/px4_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/build/mav_manager_test",
+        "/home/alessandro/Workspace/arpl_ws/install/mav_manager_test/lib/python3.10/site-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/mav_manager_srv/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/alessandro/Workspace/arpl_ws/install/trackers_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/arpl_depth_completion/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/realsense2_camera_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/quadrotor_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/px4_ros_com/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/px4_msgs/local/lib/python3.10/dist-packages",
+        "/home/alessandro/Workspace/arpl_ws/build/mav_manager_test",
+        "/home/alessandro/Workspace/arpl_ws/install/mav_manager_test/lib/python3.10/site-packages",
+        "/home/alessandro/Workspace/arpl_ws/install/mav_manager_srv/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}
