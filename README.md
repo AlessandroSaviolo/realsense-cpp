@@ -32,13 +32,14 @@ mkdir -p ~/ros_ws/src
 cd ~/ros_ws/src
 ```
 
-### 2. Build and Source the Workspace
+### 2. Clone and Build the Package
 Build the workspace using `colcon`:
 ```bash
-colcon build --symlink-install
+git clone https://github.com/AlessandroSaviolo/realsense-cpp
 ```
 Source the workspace:
 ```bash
+colcon build --symlink-install
 source install/local_setup.bash
 ```
 
