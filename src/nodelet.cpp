@@ -1,16 +1,16 @@
-#include <arpl_realsense/camera.hpp>
+#include <realsense-cpp/camera.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/msg/image.hpp>
 #include <realsense2_camera_msgs/msg/rgbd.hpp>
 
-namespace arpl_realsense
+namespace realsense_camera
 {
 class RSCameraNodelet : public rclcpp::Node {
 public:
   RSCameraNodelet(const rclcpp::NodeOptions &options) 
-  : Node("arpl_realsense", options) {
+  : Node("realsense_camera", options) {
 
     this->declare_parameter<std::string>("frame_id", "");
     this->declare_parameter<std::string>("ws_path", "");
@@ -92,4 +92,4 @@ private:
 }
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(arpl_realsense::RSCameraNodelet)
+RCLCPP_COMPONENTS_REGISTER_NODE(realsense_camera::RSCameraNodelet)

@@ -13,23 +13,23 @@ def find_ws_directory(package_name):
 
 def generate_launch_description():
 	launch_args = [
-		DeclareLaunchArgument(name="frame_id", default_value="rs_frame"),
+		DeclareLaunchArgument(name="frame_id", default_value="camera_link"),
 		DeclareLaunchArgument(name="width",    default_value="640"),
 		DeclareLaunchArgument(name="height",   default_value="480"),
 		DeclareLaunchArgument(name="fps",      default_value="30"),
 	]
 
 	frame_id = LaunchConfiguration('frame_id')
-	ws_path = find_ws_directory('arpl_realsense')
+	ws_path = find_ws_directory('realsense-cpp')
 	width = LaunchConfiguration('width')
 	height = LaunchConfiguration('height')
 	fps = LaunchConfiguration('fps')
 
 	rs_node = ComposableNode(
-		package="arpl_realsense",
-		name="rs_camera",
-		namespace='rs_camera',
-		plugin="arpl_realsense::RSCameraNodelet",
+		package="realsense-cpp",
+		name="realsense_camera",
+		namespace='realsense_camera',
+		plugin="realsense_camera::RSCameraNodelet",
 		parameters=[
 			{'frame_id':  frame_id},
 			{'ws_path':   ws_path},
@@ -41,8 +41,8 @@ def generate_launch_description():
 
 	ld = LaunchDescription(launch_args)
 	c = ComposableNodeContainer(
-		name='rs_camera_container',
-		namespace='rs_camera',
+		name='realsense_camera_container',
+		namespace='realsense_camera',
 		package='rclcpp_components',
 		executable='component_container',
 		composable_node_descriptions=[rs_node],

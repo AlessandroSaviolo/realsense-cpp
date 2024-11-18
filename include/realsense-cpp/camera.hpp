@@ -1,9 +1,6 @@
 #ifndef CAMERA_NODELET_CAMERA_HPP
 #define CAMERA_NODELET_CAMERA_HPP
 
-#include <librealsense2/rs.hpp>
-#include <librealsense2/rs_advanced_mode.hpp>
-
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
@@ -14,18 +11,11 @@
 #include <atomic>
 #include <csignal>
 #include <fstream>
-
-#ifdef QUADROTOR_NU
-    #define SAVED_QUADROTOR_NU QUADROTOR_NU
-    #undef QUADROTOR_NU
-#endif
+#include <librealsense2/rs.hpp>
+#include <librealsense2/rs_advanced_mode.hpp>
 #include <opencv2/opencv.hpp>
-#ifdef SAVED_QUADROTOR_NU
-    #define QUADROTOR_NU SAVED_QUADROTOR_NU
-    #undef SAVED_QUADROTOR_NU
-#endif
 
-namespace arpl_realsense
+namespace realsense_camera
 {
 std::atomic<bool> keep_running(true); // Global atomic flag to control the loop
 
@@ -76,8 +66,8 @@ public:
                 _cfg->enable_stream(RS2_STREAM_DEPTH, 0, _width, _height, RS2_FORMAT_Z16, _fps);
                 _cfg->enable_stream(RS2_STREAM_COLOR, 0, _width, _height, RS2_FORMAT_RGB8, _fps);
 
-                std::cout << "[RSCamera] Loading HQ configuration saved at " << workspace_path << "/src/arpl_realsense/config/rs_d455_config.json" << std::endl;
-                std::ifstream file(workspace_path + "/src/arpl_realsense/config/rs_d455_config.json");
+                std::cout << "[RSCamera] Loading HQ configuration saved at " << workspace_path << "/src/realsense-cpp/config/rs_config.json" << std::endl;
+                std::ifstream file(workspace_path + "/src/realsense-cpp/config/rs_config.json");
                 if (file.good()) {
                     std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
                     auto prof = _cfg->resolve(*_pipeline);

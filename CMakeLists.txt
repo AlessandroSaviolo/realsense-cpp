@@ -66,7 +66,7 @@ target_link_libraries(rs_camera
   ${OpenCV_LIBRARIES}
 )
 
-rclcpp_components_register_nodes(rs_camera "realsense-cpp::RSCameraNodelet")
+rclcpp_components_register_nodes(rs_camera "realsense_camera::RSCameraNodelet")
 ament_export_dependencies(${dependencies})
 
 install(TARGETS
