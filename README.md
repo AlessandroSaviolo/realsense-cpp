@@ -39,6 +39,7 @@ git clone https://github.com/AlessandroSaviolo/realsense-cpp
 ```
 Source the workspace:
 ```bash
+cd ~/ros_ws
 colcon build --symlink-install
 source install/local_setup.bash
 ```
