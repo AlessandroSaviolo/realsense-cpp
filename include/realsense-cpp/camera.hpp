@@ -1,5 +1,4 @@
-#ifndef CAMERA_NODELET_CAMERA_HPP
-#define CAMERA_NODELET_CAMERA_HPP
+#pragma once
 
 #include <iostream>
 #include <cstdlib>
@@ -89,22 +88,6 @@ public:
                 _distortion_model = _intrinsics.model;
                 std::memcpy(_distortion_coeffs, _intrinsics.coeffs, 5 * sizeof(float));
 
-                // Output the intrinsics and distortion model
-                std::cout << "[RSCamera] Camera Intrinsics:" << std::endl;
-                std::cout << "[RSCamera] Width: " << _intrinsics.width << std::endl;
-                std::cout << "[RSCamera] Height: " << _intrinsics.height << std::endl;
-                std::cout << "[RSCamera] FX: " << _intrinsics.fx << std::endl;
-                std::cout << "[RSCamera] FY: " << _intrinsics.fy << std::endl;
-                std::cout << "[RSCamera] CX: " << _intrinsics.ppx << std::endl;
-                std::cout << "[RSCamera] CY: " << _intrinsics.ppy << std::endl;
-
-                std::cout << "[RSCamera] Distortion Model: " << _distortion_model << std::endl;
-                std::cout << "[RSCamera] Distortion Coefficients: ";
-                for (int i = 0; i < 5; ++i) {
-                    std::cout << _distortion_coeffs[i] << " ";
-                }
-                std::cout << std::endl;
-
                 _align_to_color = std::make_shared<rs2::align>(RS2_STREAM_COLOR);
                 std::cout << "[RSCamera] Initialization complete." << std::endl;
             }
@@ -128,22 +111,12 @@ public:
         return int_part_ns + fract_part_ns;
     }
 
-    // Return a cv::Mat color/depth and timestamp.
-    // Timestamp is uint64_t. uint64_t to convert to timestamp is just rclcpp::Time(timestamp)
-    // This is a nanosecond fixpoint of timestamp
-    // Return success or failure on timeout
     bool grabFrames(cv::Mat& color_image, cv::Mat& depth_image, uint64_t& timestamp) {
         bool success = _pipeline->try_wait_for_frames(&_frames, _timeout_ms);
         if (success) {
             _frames = _align_to_color->process(_frames);
             rs2::frame color_frame = _frames.get_color_frame();
             rs2::frame depth_frame = _frames.get_depth_frame();
-
-            // rs2::frame filtered = depth_frame;
-            // filtered = _dec_filter.process(filtered);
-            // filtered = _thr_filter.process(filtered);
-            // filtered = _spat_filter.process(filtered);
-            // filtered = _temp_filter.process(filtered);
 
             timestamp = frameSystemTimeSec(color_frame);
             color_image = cv::Mat(cv::Size(_width, _height), CV_8UC3, (void*)color_frame.get_data(), cv::Mat::AUTO_STEP);
@@ -181,11 +154,6 @@ private:
     int _timeout_ms;
     bool _pipeline_started;
 
-    // rs2::decimation_filter _dec_filter;  // Decimation - reduces depth frame density
-    // rs2::threshold_filter _thr_filter;   // Threshold  - removes values outside recommended range
-    // rs2::spatial_filter _spat_filter;    // Spatial    - edge-preserving spatial smoothing
-    // rs2::temporal_filter _temp_filter;   // Temporal   - reduces temporal noise
-
     std::shared_ptr<rs2::context> _ctx;
     rs2::device _dev;
     rs2::device_list _device_list;
@@ -206,5 +174,3 @@ private:
 };
 
 }
-
-#endif // CAMERA_NODELET_CAMERA_HPP

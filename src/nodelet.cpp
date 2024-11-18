@@ -1,22 +1,24 @@
 #include <realsense-cpp/camera.hpp>
+#include <realsense2_camera_msgs/msg/rgbd.hpp>
 
 #include <rclcpp/rclcpp.hpp>
-#include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/msg/image.hpp>
-#include <realsense2_camera_msgs/msg/rgbd.hpp>
+#include <cv_bridge/cv_bridge.h>
 
 namespace realsense_camera
 {
 class RSCameraNodelet : public rclcpp::Node {
 public:
   RSCameraNodelet(const rclcpp::NodeOptions &options) 
-  : Node("realsense_camera", options) {
+  : Node("realsense_camera", options),
+    _clock(RCL_ROS_TIME) {
 
     this->declare_parameter<std::string>("frame_id", "");
     this->declare_parameter<std::string>("ws_path", "");
     this->declare_parameter<int>("width", 0);
     this->declare_parameter<int>("height", 0);
     this->declare_parameter<int>("fps", 0);
+    
     this->get_parameter("ws_path", _ws_path);
     this->get_parameter("frame_id", _frame_id);
     this->get_parameter("width", _width);
@@ -44,7 +46,8 @@ private:
 
         // Check if we succesfully grabbed a frame in 10ms
         if (_camera.grabFrames(color_image, depth_image, _timestamp) == false) {
-            RCLCPP_ERROR(this->get_logger(), "Dropped frame longing than RealSense API timeout");
+            RCLCPP_ERROR_THROTTLE(this->get_logger(), _clock, 1000,
+                "[RSCamera] Dropped frame longing than RealSense API timeout");
             return;
         }
 
@@ -83,10 +86,12 @@ private:
 
     RSCamera _camera;
     
+    rclcpp::Clock _clock;
+    rclcpp::TimerBase::SharedPtr _timer;
+    
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _pub_color;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _pub_depth;
     rclcpp::Publisher<realsense2_camera_msgs::msg::RGBD>::SharedPtr _pub_rgbd;
-    rclcpp::TimerBase::SharedPtr _timer;
 };
 
 }
