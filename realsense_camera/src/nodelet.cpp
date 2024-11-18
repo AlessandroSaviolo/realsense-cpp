@@ -1,5 +1,5 @@
-#include <realsense-cpp/camera.hpp>
-#include <realsense2_camera_msgs/msg/rgbd.hpp>
+#include <realsense_camera/camera.hpp>
+#include <realsense_msgs/msg/rgbd.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -47,7 +47,7 @@ private:
     void initializePublishers() {
         _pub_color = this->create_publisher<sensor_msgs::msg::Image>("camera/color/image_raw", 1);
         _pub_depth = this->create_publisher<sensor_msgs::msg::Image>("camera/depth/image_raw", 1);
-        _pub_rgbd = this->create_publisher<realsense2_camera_msgs::msg::RGBD>("camera/rgbd/image_raw", 1);
+        _pub_rgbd = this->create_publisher<realsense_msgs::msg::RGBD>("camera/rgbd/image_raw", 1);
     }
 
     // Create a timer to grab and publish frames at the specified rate
@@ -101,7 +101,7 @@ private:
     void publishRGBDMessage(const sensor_msgs::msg::Image::SharedPtr &color_msg,
                             const sensor_msgs::msg::Image::SharedPtr &depth_msg,
                             const rclcpp::Time &timestamp) {
-        realsense2_camera_msgs::msg::RGBD rgbd_msg;
+        realsense_msgs::msg::RGBD rgbd_msg;
         rgbd_msg.header.stamp = timestamp;
         rgbd_msg.header.frame_id = _frame_id;
         rgbd_msg.rgb_camera_info.header.stamp = timestamp;
@@ -127,7 +127,7 @@ private:
     rclcpp::TimerBase::SharedPtr _timer;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _pub_color;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _pub_depth;
-    rclcpp::Publisher<realsense2_camera_msgs::msg::RGBD>::SharedPtr _pub_rgbd;
+    rclcpp::Publisher<realsense_msgs::msg::RGBD>::SharedPtr _pub_rgbd;
 };
 
 } // namespace realsense_camera

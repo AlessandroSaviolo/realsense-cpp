@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>realsense-cpp</name>
+  <name>realsense_camera</name>
   <version>0.0.1</version>
   <description>Realsense CPP library</description>
   <maintainer email="alessandrosaviolo17@gmail.com">Alessandro Saviolo</maintainer>
@@ -8,12 +8,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>opencv</depend>
   <depend>rclcpp_components</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>opencv</depend>
   <depend>realsense2</depend>
-  <depend>realsense2_camera_msgs</depend>
+  <depend>realsense_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

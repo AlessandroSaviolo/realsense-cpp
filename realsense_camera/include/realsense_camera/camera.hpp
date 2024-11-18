@@ -179,7 +179,7 @@ private:
     // Loads the RealSense configuration from a specified file
     // Applies advanced mode settings if the configuration file is valid
     void loadConfiguration(const std::string& workspace_path) {
-        std::string config_path = workspace_path + "/src/realsense-cpp/config/rs_config.json";
+        std::string config_path = workspace_path + "/src/realsense-cpp/realsense_camera/config/rs_config.json";
         std::ifstream file(config_path);
 
         if (!file.good()) {

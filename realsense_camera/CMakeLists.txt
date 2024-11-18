@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(realsense-cpp)
+project(realsense_camera)
 
 cmake_policy(SET CMP0057 NEW)
 if(NOT CMAKE_BUILD_TYPE)
@@ -14,29 +14,29 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(sensor_msgs REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(CUDA REQUIRED)
-find_package(rclcpp_components REQUIRED)
 find_package(realsense2 REQUIRED)
-find_package(realsense2_camera_msgs REQUIRED)
+find_package(realsense_msgs REQUIRED)
 
 set(CUDA_TOOLKIT_ROOT_DIR /usr/local/cuda-11.4)
 
 set(dependencies
   rclcpp
-  sensor_msgs
+  rclcpp_components
   std_msgs
+  sensor_msgs
   OpenCV
   cv_bridge
   Eigen3
   CUDA
-  rclcpp_components
   realsense2
-  realsense2_camera_msgs
+  realsense_msgs
 )
 
 if (NOT CUDA_INCLUDE_DIRS)
@@ -67,8 +67,13 @@ target_link_libraries(rs_camera
 )
 
 rclcpp_components_register_nodes(rs_camera "realsense_camera::RSCameraNodelet")
-ament_export_dependencies(${dependencies})
 
+# Export dependencies and targets
+ament_export_dependencies(${dependencies})
+ament_export_include_directories(include)
+ament_export_libraries(rs_camera)
+
+# Installation commands
 install(TARGETS
   rs_camera
   ARCHIVE DESTINATION lib
@@ -76,8 +81,6 @@ install(TARGETS
   RUNTIME DESTINATION bin
 )
 install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch/)
-install(DIRECTORY include/ DESTINATION share/${PROJECT_NAME}/include/)
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
-ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
 ament_package()

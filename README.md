@@ -55,7 +55,7 @@ source install/local_setup.bash
 ### 3. Launch and Visualize
 Launch the ROS2 nodelet:
 ```bash
-ros2 launch realsense-cpp rs_camera.launch.py
+ros2 launch realsense_camera rs_camera.launch.py
 ```
 Visualize the output using `rqt_image_view`:
 ```bash

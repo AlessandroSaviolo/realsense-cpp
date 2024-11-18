@@ -7,26 +7,11 @@ from launch_ros.descriptions import ComposableNode
 from ament_index_python.packages import get_package_share_directory
 
 def find_workspace_directory(package_name):
-    """
-    Locate the workspace directory for a given package.
-    
-    Args:
-        package_name (str): Name of the package.
-
-    Returns:
-        str: Absolute path to the workspace directory.
-    """
+    # Locate the workspace directory for a given package.
     install_dir = get_package_share_directory(package_name)
     return os.path.abspath(os.path.join(install_dir, '..', '..', '..', '..'))
 
 def generate_launch_description():
-    """
-    Generate the launch description for the realsense_cpp wrapper library.
-
-    Returns:
-        LaunchDescription: A launch description containing nodes and configurations.
-    """
-
     # Declare launch arguments
     launch_arguments = [
         DeclareLaunchArgument("frame_id", default_value="camera_link", description="Frame ID for the camera."),
@@ -42,11 +27,11 @@ def generate_launch_description():
     fps = LaunchConfiguration("fps")
 
     # Locate workspace directory
-    workspace_path = find_workspace_directory("realsense-cpp")
+    workspace_path = find_workspace_directory("realsense_camera")
 
     # Define the realsense node
     realsense_node = ComposableNode(
-        package="realsense-cpp",
+        package="realsense_camera",
         name="realsense_camera",
         namespace="realsense_camera",
         plugin="realsense_camera::RSCameraNodelet",
