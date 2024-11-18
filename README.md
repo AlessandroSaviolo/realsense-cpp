@@ -1,39 +1,66 @@
-# RealSense CPP Library
+# RealSense C++ Library
 
-Wrapper library for the official Intel RealSense SDK. 
+A lightweight and efficient wrapper library for the Intel RealSense SDK, designed to minimize latency and provide streamlined access to RGBD data.
 
-Motivation: While developing my ROS2 autonomy stack, I struggled with high latency due to large RGBD communication. I replaced the ROS2 communication from camera to any nodelet by implementing a wrapper library in C++. This reduced all the communication issues I had. While developing it, I could not find clean sources of code already available. This is why I am sharing it here. It's not intended to be a wrapper with lots of functions integrated for general purposes. You can use it as it is for RGBD data, or extend it as your task requires. Feel free to make pull requests if you want to contribute.
+## Motivation
+While developing a ROS2 autonomy stack, I encountered significant latency issues with large RGBD data transmissions. By replacing ROS2 communication between the camera and nodelets with a custom C++ wrapper library, I successfully mitigated these issues. During development, I noticed a lack of clean and minimalistic code examples for this purpose, which led me to share this library.
 
-Functionality: Initializes camera with custom configuration and passes at every call to the ```grabFrames``` function the latest pair of color (RGB) and depth (D) information.
-A basic ROS2 nodelet is implemented to test the library and as example of its usage.
+This library is intentionally kept simple, focusing on providing RGBD data with minimal overhead. It is not intended as a comprehensive wrapper with extensive functionality. However, it is designed to be easily extended for specific use cases. Contributions are welcome via pull requests.
 
-## Install Intel RealSense SDK and dependencies
-```
+## Features
+- Customizable camera initialization with user-defined configurations.
+- On-demand retrieval of the latest RGB (color) and Depth (D) frames through the `grabFrames` function.
+- A basic ROS2 nodelet is included as an example and for testing purposes.
+
+---
+
+## Installation
+### 1. Install Intel RealSense SDK and Dependencies
+Run the following script to install the necessary SDK and dependencies:
+```bash
 ./install_realsense.sh
 ```
 
-## ROS2 testing
-Note: this is not stricly needed for the purpose of the wrapper. 
-Feel free to remove ROS2 dependencies and only use the hpp library.
+---
 
-### Create workspace
-```
+## ROS2 Testing
+> **Note:** ROS2 is not required to use this wrapper. If you do not need ROS2 integration, you can remove ROS2 dependencies and directly use the `.hpp` library.
+
+### 1. Create a Workspace
+```bash
 mkdir -p ~/ros_ws/src
 cd ~/ros_ws/src
 ```
 
-### Build & source
-```
+### 2. Build and Source the Workspace
+Build the workspace using `colcon`:
+```bash
 colcon build --symlink-install
 ```
-```
+Source the workspace:
+```bash
 source install/local_setup.bash
 ```
 
-### Launch & visualize
-```
+### 3. Launch and Visualize
+Launch the ROS2 nodelet:
+```bash
 ros2 launch realsense-cpp rs_camera.launch.py
 ```
-```
+Visualize the output using `rqt_image_view`:
+```bash
 ros2 run rqt_image_view rqt_image_view
 ```
+
+---
+
+## Contributing
+Contributions are encouraged! Feel free to submit pull requests to:
+- Extend functionality.
+- Improve documentation.
+- Fix bugs or issues.
+
+---
+
+## License
+This project is licensed under MIT license.
