@@ -23,6 +23,14 @@ Run the following script to install the necessary SDK and dependencies:
 
 ---
 
+## Configuration
+The library assumes the presence of a configuration file `rs_config.json` located in the `config` folder. You can generate this file using the following steps:
+1. Run the `realsense-viewer` command.
+2. Edit the camera settings, such as exposure, projector intensity, etc., to your preferences.
+3. Save the configuration to a file named `rs_config.json` and place it in the `config` folder.
+
+---
+
 ## ROS2 Testing
 > **Note:** ROS2 is not required to use this wrapper. If you do not need ROS2 integration, you can remove ROS2 dependencies and directly use the `.hpp` library.
 
