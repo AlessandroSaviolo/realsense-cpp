@@ -64,6 +64,14 @@ ros2 run rqt_image_view rqt_image_view
 
 ---
 
+## Tested Environment
+This code was tested on the following setup:
+- **Hardware:** NVIDIA Orin 16GB
+- **ROS2 Distribution:** Humble
+- **Librealsense Version:** v2.55.1
+
+---
+
 ## Contributing
 Contributions are encouraged! Feel free to submit pull requests to:
 - Extend functionality.
