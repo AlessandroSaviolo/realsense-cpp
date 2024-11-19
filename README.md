@@ -83,7 +83,7 @@ Contributions are encouraged! Feel free to submit pull requests to:
 ## License
 This project is licensed under MIT license.
 
-```bibtex
+```license
 Copyright (c) 2024 AlessandroSaviolo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
