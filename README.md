@@ -85,10 +85,6 @@ This project is licensed under MIT license.
 
 ---
 
-Here’s an improved version of the **Citation** section that aligns more closely with the professional tone and format used in the rest of the README:
-
----
-
 ## Citation
 
 This repository includes code that supports the paper **"Reactive Collision Avoidance for Safe Agile Navigation"**. 
