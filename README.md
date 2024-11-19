@@ -82,3 +82,22 @@ Contributions are encouraged! Feel free to submit pull requests to:
 
 ## License
 This project is licensed under MIT license.
+
+---
+
+Here’s an improved version of the **Citation** section that aligns more closely with the professional tone and format used in the rest of the README:
+
+---
+
+## Citation
+
+This repository includes code that supports the paper **"Reactive Collision Avoidance for Safe Agile Navigation"**. 
+If you use this library in your research or academic projects, please cite the following:
+```bibtex
+@article{saviolo2024reactive,
+  title={Reactive Collision Avoidance for Safe Agile Navigation},
+  author={Saviolo, Alessandro and Picello, Niko and Verma, Rishabh and Loianno, Giuseppe},
+  journal={arXiv preprint arXiv:2409.11962},
+  year={2024}
+}
+```
