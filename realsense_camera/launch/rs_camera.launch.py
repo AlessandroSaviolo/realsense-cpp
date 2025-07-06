@@ -12,22 +12,15 @@ def find_workspace_directory(package_name):
     return os.path.abspath(os.path.join(install_dir, '..', '..', '..', '..'))
 
 def generate_launch_description():
-    # Declare launch arguments
-    launch_arguments = [
-        DeclareLaunchArgument("frame_id", default_value="camera_link", description="Frame ID for the camera."),
-        DeclareLaunchArgument("width", default_value="640", description="Image width."),
-        DeclareLaunchArgument("height", default_value="480", description="Image height."),
-        DeclareLaunchArgument("fps", default_value="30", description="Frames per second."),
-    ]
-
-    # Extract launch configurations
-    frame_id = LaunchConfiguration("frame_id")
-    width = LaunchConfiguration("width")
-    height = LaunchConfiguration("height")
-    fps = LaunchConfiguration("fps")
-
     # Locate workspace directory
     workspace_path = find_workspace_directory("realsense_camera")
+
+    # Path to the config file
+    config_file = os.path.join(
+        get_package_share_directory("realsense_camera"),
+        "config",
+        "rs_params.yaml"
+    )
 
     # Define the realsense node
     realsense_node = ComposableNode(
@@ -36,11 +29,8 @@ def generate_launch_description():
         namespace="realsense_camera",
         plugin="realsense_camera::RSCameraNodelet",
         parameters=[
-            {"frame_id": frame_id},
             {"ws_path": workspace_path},
-            {"width": width},
-            {"height": height},
-            {"fps": fps},
+            config_file
         ],
     )
 
@@ -56,7 +46,7 @@ def generate_launch_description():
     )
 
     # Assemble the launch description
-    launch_description = LaunchDescription(launch_arguments)
+    launch_description = LaunchDescription()
     launch_description.add_action(node_container)
 
     return launch_description

@@ -31,7 +31,7 @@ public:
     }
 
     // Constructor: Initializes the pipeline and sets the signal handler
-    RSCamera() : _pipeline_started(false), _timeout_ms(0.1) {
+    RSCamera() : _pipeline_started(false), _timeout_ms(0.001) {
         std::signal(SIGINT, signal_handler);
     }
 
@@ -42,21 +42,65 @@ public:
 
     // Initializes the RealSense camera with specified parameters
     // Throws exceptions on invalid input or initialization failure
-    void init(const std::string& workspace_path, int width, int height, int fps) {
-        std::cout << "[RSCamera] Initializing..." << std::endl;
+    void init(const std::string& workspace_path, int width, int height, int fps, const std::string& serial_number) {
+        std::cout << "[RSCamera] Initializing camera with serial: " << serial_number << std::endl;
         try {
             validateInput(width, height, fps);
             _width = width;
             _height = height;
             _fps = fps;
+            _serial_number = serial_number;
             _ctx = std::make_shared<rs2::context>();
-            discoverDevices();
-            configurePipeline(workspace_path);
-            std::cout << "[RSCamera] Initialization complete." << std::endl;
+
+            // Always list available devices
+            auto devices = _ctx->query_devices();
+            std::cout << "[RSCamera] Connected RealSense devices:" << std::endl;
+            if (devices.size() == 0) {
+                std::cout << "  - None" << std::endl;
+            } else {
+                for (auto&& dev : devices) {
+                    std::string serial = dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER);
+                    std::string name = dev.get_info(RS2_CAMERA_INFO_NAME);
+                    std::cout << "  - " << name << " (Serial: " << serial << ")" << std::endl;
+                }
+            }
+
+            // Check if requested device exists
+            bool device_found = false;
+            for (auto&& dev : devices) {
+                if (dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) == _serial_number) {
+                    device_found = true;
+                    break;
+                }
+            }
+
+            if (!device_found) {
+                std::cerr << "[RSCamera] Error: Requested device with serial '" << _serial_number << "' not found." << std::endl;
+                throw std::runtime_error("Requested RealSense device not found.");
+            }
+
+            _pipeline = std::make_shared<rs2::pipeline>();
+            _cfg = std::make_shared<rs2::config>();
+
+            _cfg->enable_device(_serial_number);
+            _cfg->enable_stream(RS2_STREAM_DEPTH, 0, _width, _height, RS2_FORMAT_Z16, _fps);
+            _cfg->enable_stream(RS2_STREAM_COLOR, 0, _width, _height, RS2_FORMAT_RGB8, _fps);
+
+            loadConfiguration(workspace_path);
+
+            std::cout << "[RSCamera] Starting pipeline for serial: " << _serial_number << std::endl;
+            _pipeline_profile = _pipeline->start(*_cfg);
+            _pipeline_started = true;
+
+            retrieveIntrinsics();
+            _align_to_color = std::make_shared<rs2::align>(RS2_STREAM_COLOR);
+            std::cout << "[RSCamera] Initialization complete for serial: " << _serial_number << std::endl;
         } catch (const rs2::error& e) {
             logError("RealSense", e.get_failed_function(), e.get_failed_args(), e.what());
+            throw;
         } catch (const std::exception& e) {
             logError("Exception", e.what());
+            throw;
         }
     }
 
@@ -79,7 +123,8 @@ public:
 
                 color_image = cv::Mat(cv::Size(_width, _height), CV_8UC3, const_cast<void*>(color_frame.get_data()), cv::Mat::AUTO_STEP);
                 depth_image = cv::Mat(cv::Size(_width, _height), CV_16U, const_cast<void*>(depth_frame.get_data()), cv::Mat::AUTO_STEP);
-            } catch (const std::exception& e) {
+            } 
+            catch (const std::exception& e) {
                 logError("Frame Processing", e.what());
                 return false;
             }
@@ -187,13 +232,58 @@ private:
             return;
         }
 
+        std::string config_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
         try {
-            std::string config_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            auto profile = _cfg->resolve(*_pipeline);
-            if (auto advanced = profile.get_device().as<rs400::advanced_mode>()) {
-                advanced.load_json(config_content);
-                std::cout << "[RSCamera] Configuration loaded successfully." << std::endl;
+            rs2::device dev;
+            for (auto&& d : _ctx->query_devices()) {
+                if (d.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) == _serial_number) {
+                    dev = d;
+                    break;
+                }
             }
+
+            std::string name = dev.get_info(RS2_CAMERA_INFO_NAME);
+            std::cout << "[RSCamera] Connected device: " << name << std::endl;
+
+            if (!dev.is<rs400::advanced_mode>()) {
+                std::cerr << "[RSCamera] Device does not support advanced mode. Skipping configuration." << std::endl;
+                return;
+            }
+
+            rs400::advanced_mode advanced_dev = dev.as<rs400::advanced_mode>();
+
+            if (!advanced_dev.is_enabled()) {
+                std::cout << "[RSCamera] Enabling advanced mode..." << std::endl;
+                advanced_dev.toggle_advanced_mode(true);
+
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+
+                _ctx = std::make_shared<rs2::context>();
+                _device_list = _ctx->query_devices();
+
+                if (_device_list.size() == 0) {
+                    std::cerr << "[RSCamera] No RealSense devices found after toggling advanced mode." << std::endl;
+                    return;
+                }
+
+                for (auto&& d : _device_list) {
+                    if (d.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) == _serial_number) {
+                        dev = d;
+                        break;
+                    }
+                }
+
+                if (!dev.is<rs400::advanced_mode>()) {
+                    std::cerr << "[RSCamera] Failed to re-enable advanced mode after toggle." << std::endl;
+                    return;
+                }
+
+                advanced_dev = dev.as<rs400::advanced_mode>();
+            }
+
+            advanced_dev.load_json(config_content);
+            std::cout << "[RSCamera] Configuration loaded successfully." << std::endl;
         } catch (const rs2::error& e) {
             logError("Configuration Loading", e.get_failed_function(), e.get_failed_args(), e.what());
         } catch (const std::exception& e) {
@@ -241,8 +331,9 @@ private:
     int _width{0};
     int _height{0};
     int _fps{0};
-    double _timeout_ms{0.1};
+    double _timeout_ms{0.001};
     bool _pipeline_started{false};
+    std::string _serial_number;
 
     // RealSense components
     std::shared_ptr<rs2::context> _ctx;

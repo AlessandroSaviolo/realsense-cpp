@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    frame_id: "camera_link"
+    serial_number: "241122305659"
+    # serial_number: "231122301495"
+    width: 640
+    height: 480
+    fps: 60

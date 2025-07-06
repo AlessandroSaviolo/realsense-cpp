@@ -14,33 +14,35 @@ public:
     explicit RSCameraNodelet(const rclcpp::NodeOptions &options)
         : Node("realsense_camera", options), _clock(RCL_ROS_TIME) {
 
-        declareAndGetParameters();
+        initializeParameters();
         initializeCamera();
         initializePublishers();
         startFrameTimer();
     }
 
 private:
-    // Declare and get parameters from the parameter server
-    void declareAndGetParameters() {
-        // Declare parameters
-        this->declare_parameter<std::string>("frame_id", "");
-        this->declare_parameter<std::string>("ws_path", "");
-        this->declare_parameter<int>("width", 640);  // Default width is 640
-        this->declare_parameter<int>("height", 480); // Default height is 480
-        this->declare_parameter<int>("fps", 30);     // Default FPS is 30
+    template <typename T>
+    void declareAndLoadParameter(const std::string &param_name, T &param_value, const T &default_value) {
+        this->declare_parameter<T>(param_name, default_value);
+        if (!this->get_parameter(param_name, param_value))
+            std::cout << "[RSCamera] No " << param_name << "!" << std::endl << std::flush;
+        else
+            std::cout << "[RSCamera] " << param_name << ": " << param_value << std::endl << std::flush;
+    }
 
-        // Get parameters
-        this->get_parameter("frame_id", _frame_id);
-        this->get_parameter("ws_path", _ws_path);
-        this->get_parameter("width", _width);
-        this->get_parameter("height", _height);
-        this->get_parameter("fps", _fps);
+    // Initialize parameters from the parameter server
+    void initializeParameters() {
+        declareAndLoadParameter("frame_id", _frame_id, std::string(""));
+        declareAndLoadParameter("ws_path", _ws_path, std::string(""));
+        declareAndLoadParameter("serial_number", _serial_number, std::string(""));
+        declareAndLoadParameter("width", _width, 0);
+        declareAndLoadParameter("height", _height, 0);
+        declareAndLoadParameter("fps", _fps, 0);
     }
 
     // Initialize the RealSense camera with given parameters
     void initializeCamera() {
-        _camera.init(_ws_path, _width, _height, _fps);
+        _camera.init(_ws_path, _width, _height, _fps, _serial_number);
     }
 
     // Initialize ROS 2 publishers for color, depth, and RGBD topics
@@ -114,6 +116,7 @@ private:
     // Node parameters
     std::string _frame_id;
     std::string _ws_path;
+    std::string _serial_number;
     int _width{640};   // Default width
     int _height{480};  // Default height
     int _fps{30};      // Default FPS
